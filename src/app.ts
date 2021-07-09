@@ -35,7 +35,7 @@ class State<T> {
     }
 }
 class ProjectState extends State<Project> {
-    
+
     private projects: Project[] = [];
     private static instance: ProjectState;
 
@@ -49,7 +49,7 @@ class ProjectState extends State<Project> {
         return this.instance;
     }
 
-    
+
 
     addProject(title: string, description: string, numOfPeople: number): void {
         const newProject = new Project(
@@ -150,7 +150,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 }
 
 // ProjectItem class
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable{
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
     private project: Project;
 
     get persons() {
@@ -171,7 +171,7 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
         event.dataTransfer!.effectAllowed = "move";
     }
 
-    dragEndHandler(_: DragEvent): void {}
+    dragEndHandler(_: DragEvent): void { }
 
     configure(): void {
         this.element.addEventListener('dragstart', this.dragStartHandler);
@@ -269,7 +269,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
         this.element.addEventListener('submit', this.submitHandler);
     }
 
-    renderContent(): void {}
+    renderContent(): void { }
 
     @Autobind
     private submitHandler(event: Event): void {
