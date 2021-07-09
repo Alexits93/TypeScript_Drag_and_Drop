@@ -1,45 +1,4 @@
-interface Validatable {
-    value: string | number;
-    required?: boolean;
-    minLenght?: number;
-    maxLength?: number;
-    min?: number;
-    max?: number;
-}
-
-function validate(validatableInput: Validatable) {
-    let isValid = true;
-    if (validatableInput.required) {
-        isValid = isValid && !!validatableInput.value.toString().trim().length;
-    }
-    if (validatableInput.minLenght && typeof validatableInput.value === 'string') {
-        isValid = isValid && validatableInput.value.length >= validatableInput.minLenght;
-    }
-    if (validatableInput.maxLength && typeof validatableInput.value === 'string') {
-        isValid = isValid && validatableInput.value.length <= validatableInput.maxLength;
-    }
-    if (validatableInput.min && typeof validatableInput.value === 'number') {
-        isValid = isValid && validatableInput.value >= validatableInput.min;
-    }
-    if (validatableInput.max && typeof validatableInput.value === 'number') {
-        isValid = isValid && validatableInput.value <= validatableInput.max;
-    }
-    return isValid;
-}
-// Autobind decorator
-function Autobind(target: any, methodName: string, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-    const adjDescriptor: PropertyDescriptor = {
-        configurable: true,
-        get() {
-            const boundFn = originalMethod.bind(this);
-            return boundFn;
-        }
-    };
-    return adjDescriptor;
-}
-
-// Drag & Drop Interfaces
+// Drag & Drop interfaces
 interface Draggable {
     dragStartHandler(event: DragEvent): void;
     dragEndHandler(event: DragEvent): void;
@@ -55,6 +14,8 @@ interface DragTarget {
 enum ProjectStatus {
     Active, Finished
 }
+
+// Project class
 class Project {
     constructor(public id: string,
         public title: string,
@@ -99,6 +60,18 @@ class ProjectState extends State<Project> {
             ProjectStatus.Active
         );
         this.projects.push(newProject);
+        this.updateListeners();
+    }
+
+    moveProject(projectId: string, newStatus: ProjectStatus): void {
+        const project = this.projects.find(prj => prj.id === projectId);
+        if (project && project.status !== newStatus) {
+            project.status = newStatus;
+            this.updateListeners();
+        }
+    }
+
+    private updateListeners(): void {
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
         }
@@ -106,6 +79,48 @@ class ProjectState extends State<Project> {
 }
 
 const projectState = ProjectState.getInstance();
+
+// Validatable interface
+interface Validatable {
+    value: string | number;
+    required?: boolean;
+    minLenght?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+}
+
+function validate(validatableInput: Validatable) {
+    let isValid = true;
+    if (validatableInput.required) {
+        isValid = isValid && !!validatableInput.value.toString().trim().length;
+    }
+    if (validatableInput.minLenght && typeof validatableInput.value === 'string') {
+        isValid = isValid && validatableInput.value.length >= validatableInput.minLenght;
+    }
+    if (validatableInput.maxLength && typeof validatableInput.value === 'string') {
+        isValid = isValid && validatableInput.value.length <= validatableInput.maxLength;
+    }
+    if (validatableInput.min && typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value >= validatableInput.min;
+    }
+    if (validatableInput.max && typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value <= validatableInput.max;
+    }
+    return isValid;
+}
+// Autobind decorator
+function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        get() {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
+        }
+    };
+    return adjDescriptor;
+}
 
 // Component Base Class
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
@@ -152,12 +167,11 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
 
     @Autobind
     dragStartHandler(event: DragEvent): void {
-        console.log(event);
+        event.dataTransfer!.setData('text/plain', this.project.id);
+        event.dataTransfer!.effectAllowed = "move";
     }
 
-    dragEndHandler(_: DragEvent): void {
-        console.log('Dragend');
-    }
+    dragEndHandler(_: DragEvent): void {}
 
     configure(): void {
         this.element.addEventListener('dragstart', this.dragStartHandler);
@@ -172,7 +186,7 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
 }
 
 // ProjectList class
-class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget {
     assignedProjects: Project[];
 
     constructor(private type: 'active' | 'finished') {
@@ -183,7 +197,32 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
         this.renderContent();
     }
 
+    @Autobind
+    dragOverHandler(event: DragEvent): void {
+        if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+            event.preventDefault();
+            const listEl = this.element.querySelector('ul')!;
+            listEl.classList.add('droppable');
+        }
+    }
+
+    @Autobind
+    dropHandler(event: DragEvent): void {
+        const prjId = event.dataTransfer!.getData('text/plain');
+        projectState.moveProject(prjId, this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished);
+    }
+
+    @Autobind
+    dragLeaveHandler(_: DragEvent): void {
+        const listEl = this.element.querySelector('ul')!;
+        listEl.classList.remove('droppable');
+    }
+
     configure() {
+        this.element.addEventListener('dragover', this.dragOverHandler);
+        this.element.addEventListener('dragleave', this.dragLeaveHandler);
+        this.element.addEventListener('drop', this.dropHandler);
+
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(prj => {
                 if (this.type === 'active') {
