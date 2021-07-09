@@ -1,7 +1,7 @@
 // Drag & Drop interfaces
 interface Draggable {
     dragStartHandler(event: DragEvent): void;
-    dragEndHandler(event: DragEvent): void;
+    // dragEndHandler(event: DragEvent): void;
 }
 
 interface DragTarget {
@@ -112,14 +112,12 @@ function validate(validatableInput: Validatable) {
 // Autobind decorator
 function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    const adjDescriptor: PropertyDescriptor = {
+    return {
         configurable: true,
         get() {
-            const boundFn = originalMethod.bind(this);
-            return boundFn;
+            return originalMethod.bind(this);
         }
-    };
-    return adjDescriptor;
+    } as PropertyDescriptor;
 }
 
 // Component Base Class
@@ -171,11 +169,11 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
         event.dataTransfer!.effectAllowed = "move";
     }
 
-    dragEndHandler(_: DragEvent): void { }
+    // dragEndHandler(_: DragEvent): void { }
 
     configure(): void {
         this.element.addEventListener('dragstart', this.dragStartHandler);
-        this.element.addEventListener('dragend', this.dragEndHandler);
+        // this.element.addEventListener('dragend', this.dragEndHandler);
     }
 
     renderContent(): void {
