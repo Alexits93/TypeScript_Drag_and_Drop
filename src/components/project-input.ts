@@ -4,9 +4,9 @@ import { Autobind } from "../decorators/autobind";
 import { projectState } from "../state/project-state";
 // ProjectInput class
 export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
-    titleInputElement: HTMLInputElement;
-    descriptionInputElement: HTMLInputElement;
-    peopleInputElement: HTMLInputElement;
+    private titleInputElement: HTMLInputElement;
+    private descriptionInputElement: HTMLInputElement;
+    private peopleInputElement: HTMLInputElement;
 
     constructor() {
         super('project-input', 'app', true, 'user-input');
@@ -22,6 +22,11 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 
     renderContent(): void { }
 
+    /**
+     * 
+     * @param event 
+     * This method should be triggered, whenever the form is submitted.
+     */
     @Autobind
     private submitHandler(event: Event): void {
         event.preventDefault();

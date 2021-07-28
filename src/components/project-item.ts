@@ -1,4 +1,3 @@
-
 import { Draggable } from '../models/drag-drop';
 import Component from './base-component';
 import { Project } from '../models/project';
