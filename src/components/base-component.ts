@@ -1,8 +1,8 @@
 // Component Base Class
 export default abstract class Component<T extends HTMLElement, U extends HTMLElement> {
-    templateElement: HTMLTemplateElement; // gives access to the temlpate that holds the content
-    hostElement: T; // holds a reference to the element to where I want to render my template content
-    element: U;
+    protected templateElement: HTMLTemplateElement; // gives access to the temlpate that holds the content
+    protected hostElement: T; // holds a reference to the element to where I want to render my template content
+    protected element: U;
 
     constructor(templateId: string, hostElementId: string, instertAtStart: boolean, newElementId?: string) {
         this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement;

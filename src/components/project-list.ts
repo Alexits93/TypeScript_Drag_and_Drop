@@ -1,13 +1,12 @@
 import Component from "./base-component";
 import { DragTarget } from "../models/drag-drop";
-import { Project } from "../models/project";
+import { Project, ProjectStatus } from "../models/project";
 import { Autobind } from "../decorators/autobind";
 import { projectState } from "../state/project-state";
-import { ProjectStatus } from "../models/project";
 import { ProjectItem } from "./project-item";
 // ProjectList class
 export class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget {
-    assignedProjects: Project[];
+    private assignedProjects: Project[];
 
     constructor(private type: 'active' | 'finished') {
         super('project-list', 'app', false, `${type}-projects`);

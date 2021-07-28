@@ -4,9 +4,9 @@ import { Autobind } from "../decorators/autobind";
 import { projectState } from "../state/project-state";
 // ProjectInput class
 export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
-    titleInputElement: HTMLInputElement;
-    descriptionInputElement: HTMLInputElement;
-    peopleInputElement: HTMLInputElement;
+    private titleInputElement: HTMLInputElement;
+    private descriptionInputElement: HTMLInputElement;
+    private peopleInputElement: HTMLInputElement;
 
     constructor() {
         super('project-input', 'app', true, 'user-input');
