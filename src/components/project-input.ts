@@ -50,8 +50,8 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
         const peopleValidatable: Validation.Validatable = {
             value: enteredPeople,
             required: true,
-            min: 1,
-            max: 5
+            min: 0,
+            max: 10
         };
 
         if (
