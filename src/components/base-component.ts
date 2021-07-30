@@ -1,5 +1,7 @@
 /**
  * The base component class, where the other project classes are inheriting their base logic and structure from.
+ * We don't want to export it as a named import - default tells js, that it is the
+ * main export of the file.
  */
 export default abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     protected templateElement: HTMLTemplateElement; // gives access to the temlpate that holds the content

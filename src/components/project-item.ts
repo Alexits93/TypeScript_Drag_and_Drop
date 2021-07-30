@@ -20,17 +20,35 @@ export class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> impl
         this.renderContent();
     }
 
+    /**
+     * 
+     * @param event the dataTransfer property of DragEvent, you can attach data
+     * to the DragEvent and you can extract this data upon a drop. The browser and js
+     * behind the scene will store the data during the drag operation and ensure
+     * that the data you get when the drop happens is the same data you get here.
+     */
     @Autobind
     dragStartHandler(event: DragEvent): void {
+        console.log(event);
         event.dataTransfer!.setData('text/plain', this.project.id);
+        /**
+         * This controls how the cursor will look like and tells the browser
+         * about our intentions, that we plan to move an element from A to B.
+         * This means upon a drop we remove the element from it's original place
+         * and move it to it's new place.
+         */
         event.dataTransfer!.effectAllowed = "move";
+    }
+
+    dragEndHandler() {
+        console.log('dragEnd');
     }
 
     // dragEndHandler(_: DragEvent): void { }
 
     configure(): void {
         this.element.addEventListener('dragstart', this.dragStartHandler);
-        // this.element.addEventListener('dragend', this.dragEndHandler);
+        this.element.addEventListener('dragend', this.dragEndHandler);
     }
 
     renderContent(): void {

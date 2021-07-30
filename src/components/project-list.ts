@@ -16,8 +16,17 @@ export class ProjectList extends Component<HTMLDivElement, HTMLElement> implemen
         this.renderContent();
     }
 
+    /**
+     * 
+     * @param event -
+     * Fires when you enter a draggable area with an item attached to the mouse.
+     */
     @Autobind
     dragOverHandler(event: DragEvent): void {
+        /**
+         * Is the data attached to the drag event is a certain format?
+         * We just allow dropping off plain text, no images etc...
+         */
         if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
             event.preventDefault();
             const listEl = this.element.querySelector('ul')!;
@@ -25,6 +34,13 @@ export class ProjectList extends Component<HTMLDivElement, HTMLElement> implemen
         }
     }
 
+    /**
+     * 
+     * @param event the dataTransfer property of DragEvent, you can attach data
+     * to the DragEvent and you can extract this data upon a drop. The browser and js
+     * behind the scene will store the data during the drag operation and ensure
+     * that the data you get when the drop happens is the same data you get here.
+     */
     @Autobind
     dropHandler(event: DragEvent): void {
         const prjId = event.dataTransfer!.getData('text/plain');
@@ -33,6 +49,7 @@ export class ProjectList extends Component<HTMLDivElement, HTMLElement> implemen
 
     @Autobind
     dragLeaveHandler(_: DragEvent): void {
+        console.log('dragLeave');
         const listEl = this.element.querySelector('ul')!;
         listEl.classList.remove('droppable');
     }
